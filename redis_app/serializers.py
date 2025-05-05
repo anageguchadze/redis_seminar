@@ -8,5 +8,5 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = Animal
         fields = '__all__'
