@@ -7,6 +7,9 @@ from rest_framework.filters import SearchFilter
 from django.core.cache import cache
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -27,9 +30,12 @@ class AnimalList(generics.ListCreateAPIView):
     search_fields = ['name', 'diet']
     def list(self, request, *args, **kwargs):
         query_params = request.query_params
-        cache_key = f'animal_list {query_params}'
+        cache_key = f'animal_list:{query_params}'
         data = cache.get(cache_key)
-        if not data:
+        if data:
+            logger.info('data retrieved from cache')
+        else:
+            logger.info('data retrieved from db')
             filtered_queryset = self.filter_queryset(self.get_queryset())
             data = AnimalSerializer(filtered_queryset, many=True).data
             cache_time = 60 * 5
